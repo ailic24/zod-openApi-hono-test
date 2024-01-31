@@ -1,0 +1,19 @@
+{
+  "name": "zod-openapi-hono-test",
+  "version": "1.0.0",
+  "description": "Test Hono project with Zod OpenApi Hono extension.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.7.0",
+    "hono": "^3.12.8"
+  },
+  "devDependencies": {
+    "tsx": "^3.12.2"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
