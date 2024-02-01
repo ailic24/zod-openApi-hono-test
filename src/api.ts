@@ -16,8 +16,8 @@ api.doc("/openapi", {
 api.use("/*", logger());
 api.route("/account", accountApi);
 api.get(
-	"/doc/ui",
+	"/openapi/ui",
 	swaggerUI({
-		url: "/doc",
+		url: "/openapi",
 	}),
 );
