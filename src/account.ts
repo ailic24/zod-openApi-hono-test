@@ -1,5 +1,5 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-
+import { ErrorSchema } from "./shared";
 const ParamsSchema = z.object({
 	id: z
 		.string()
@@ -33,6 +33,8 @@ const accountApi = new OpenAPIHono();
 const getRoute = createRoute({
 	method: "get",
 	path: "/{id}",
+	description: "Get Account",
+	tags: ["account"],
 	request: {
 		params: ParamsSchema,
 	},
@@ -54,6 +56,58 @@ accountApi.openapi(getRoute, (c) => {
 		id,
 		age: 20,
 		name: "Ultra-man",
+	});
+});
+
+const postRoute = createRoute({
+	method: "post",
+	path: "/",
+	tags: ["account"],
+	description: "Create account",
+	request: {
+		body: {
+			description: "Account data",
+			content: {
+				"application/json": {
+					schema: AccountSchema,
+				},
+			},
+		},
+	},
+	responses: {
+		200: {
+			content: {
+				"application/json": {
+					schema: AccountSchema,
+				},
+			},
+			description: "Account data received",
+		},
+		400: {
+			content: {
+				"application/json": {
+					schema: ErrorSchema,
+				},
+			},
+			description: "Returns an error",
+		},
+		403: {
+			content: {
+				"application/json": {
+					schema: ErrorSchema,
+				},
+			},
+			description: "Returns an error",
+		},
+	},
+});
+
+accountApi.openapi(postRoute, (c) => {
+	const { id, name, age } = c.req.valid("json");
+	return c.json({
+		id,
+		age,
+		name,
 	});
 });
 
