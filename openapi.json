@@ -1,0 +1,173 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Test API"
+    },
+    "components": {
+        "schemas": {
+            "BankAccountSchema": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "1"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "accountType": {
+                        "type": "string",
+                        "enum": [
+                            "BANK_ACCOUNT"
+                        ]
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "accountType"
+                ]
+            },
+            "RetirementAccountSchema": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "example": "1"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "age": {
+                        "type": "number",
+                        "example": 24
+                    },
+                    "accountType": {
+                        "type": "string",
+                        "enum": [
+                            "RETIREMENT_ACCOUNT"
+                        ]
+                    }
+                },
+                "required": [
+                    "id",
+                    "name",
+                    "age",
+                    "accountType"
+                ]
+            }
+        },
+        "parameters": {}
+    },
+    "paths": {
+        "/account": {
+            "post": {
+                "tags": [
+                    "account"
+                ],
+                "description": "Create account",
+                "requestBody": {
+                    "description": "Account data",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "oneOf": [
+                                    {
+                                        "$ref": "#/components/schemas/BankAccountSchema"
+                                    },
+                                    {
+                                        "$ref": "#/components/schemas/RetirementAccountSchema"
+                                    }
+                                ],
+                                "discriminator": {
+                                    "propertyName": "accountType",
+                                    "mapping": {
+                                        "BANK_ACCOUNT": "#/components/schemas/BankAccountSchema",
+                                        "RETIREMENT_ACCOUNT": "#/components/schemas/RetirementAccountSchema"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Account data received",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "$ref": "#/components/schemas/BankAccountSchema"
+                                        },
+                                        {
+                                            "$ref": "#/components/schemas/RetirementAccountSchema"
+                                        }
+                                    ],
+                                    "discriminator": {
+                                        "propertyName": "accountType",
+                                        "mapping": {
+                                            "BANK_ACCOUNT": "#/components/schemas/BankAccountSchema",
+                                            "RETIREMENT_ACCOUNT": "#/components/schemas/RetirementAccountSchema"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Returns an error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "number",
+                                            "example": 400
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Bad Request"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Returns an error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "number",
+                                            "example": 400
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Bad Request"
+                                        }
+                                    },
+                                    "required": [
+                                        "code",
+                                        "message"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
