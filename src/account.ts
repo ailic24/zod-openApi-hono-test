@@ -1,20 +1,24 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import { ErrorSchema } from "./shared";
-const ParamsSchema = z.object({
-	id: z
-		.string()
-		.min(1)
-		.openapi({
-			param: {
-				name: "id",
-				in: "path",
-			},
-			description: "The id of the account",
+
+enum AccountTypeEnum {
+	BANK_ACCOUNT = "BANK_ACCOUNT",
+	RETIREMENT_ACCOUNT = "RETIREMENT_ACCOUNT",
+}
+
+const BankAccountSchema = z
+	.object({
+		id: z.string().openapi({
 			example: "1",
 		}),
-});
+		name: z.string().openapi({
+			example: "John Doe",
+		}),
+		accountType: z.literal("BANK_ACCOUNT"),
+	})
+	.openapi("BankAccountSchema");
 
-const AccountSchema = z
+const RetirementAccountSchema = z
 	.object({
 		id: z.string().openapi({
 			example: "1",
@@ -23,41 +27,18 @@ const AccountSchema = z
 			example: "John Doe",
 		}),
 		age: z.number().openapi({
-			example: 42,
+			example: 24,
 		}),
+		accountType: z.literal("RETIREMENT_ACCOUNT"),
 	})
-	.openapi("Account");
+	.openapi("RetirementAccountSchema");
+
+const AccountSchema = z.discriminatedUnion("accountType", [
+	BankAccountSchema,
+	RetirementAccountSchema,
+]);
 
 const accountApi = new OpenAPIHono();
-
-const getRoute = createRoute({
-	method: "get",
-	path: "/{id}",
-	description: "Get Account",
-	tags: ["account"],
-	request: {
-		params: ParamsSchema,
-	},
-	responses: {
-		200: {
-			content: {
-				"application/json": {
-					schema: AccountSchema,
-				},
-			},
-			description: "Retrieve the account",
-		},
-	},
-});
-
-accountApi.openapi(getRoute, (c) => {
-	const { id } = c.req.valid("param");
-	return c.json({
-		id,
-		age: 20,
-		name: "Ultra-man",
-	});
-});
 
 const postRoute = createRoute({
 	method: "post",
@@ -103,12 +84,8 @@ const postRoute = createRoute({
 });
 
 accountApi.openapi(postRoute, (c) => {
-	const { id, name, age } = c.req.valid("json");
-	return c.json({
-		id,
-		age,
-		name,
-	});
+	const data = c.req.valid("json");
+	return c.json(data);
 });
 
 export { accountApi };
