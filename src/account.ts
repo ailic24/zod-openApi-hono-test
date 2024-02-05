@@ -14,8 +14,8 @@ const BankAccountSchema = z
 		name: z.string().openapi({
 			example: "John Doe",
 		}),
-		accountType: z.literal("BANK_ACCOUNT"),
-	})
+		accountType: z.literal(AccountTypeEnum.BANK_ACCOUNT),
+	}).strict()
 	.openapi("BankAccountSchema");
 
 const RetirementAccountSchema = z
@@ -23,14 +23,17 @@ const RetirementAccountSchema = z
 		id: z.string().openapi({
 			example: "1",
 		}),
-		name: z.string().openapi({
+		name: z.string({
+			required_error: "Name is required",
+			invalid_type_error: "Name must be a string",
+		  }).openapi({
 			example: "John Doe",
 		}),
 		age: z.number().openapi({
 			example: 24,
 		}),
-		accountType: z.literal("RETIREMENT_ACCOUNT"),
-	})
+		accountType: z.literal(AccountTypeEnum.RETIREMENT_ACCOUNT),
+	}).strict()
 	.openapi("RetirementAccountSchema");
 
 const AccountSchema = z.discriminatedUnion("accountType", [
